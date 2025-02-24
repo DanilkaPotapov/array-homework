@@ -1,23 +1,19 @@
 package com.edu;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class DefaultCustomArrayList<E> implements CustomArrayList<E> {
 
-    private Object[] array;
+    private ArrayList<E> array;
 
     public DefaultCustomArrayList() {
-        array = new Object[0];
+        array = new ArrayList<E>();
     }
 
     @Override
     public boolean add(E element) {
-        int newSize = array.length + 1;
-        Object[] newArray = new Object[newSize];
-        System.arraycopy(array, 0, newArray, 0, array.length);
-        newArray[array.length] = element;
-
-        array = newArray;
+        array.add(element);
 
         return true;
     }
@@ -25,8 +21,8 @@ public class DefaultCustomArrayList<E> implements CustomArrayList<E> {
     @Override
     public boolean remove(E element) {
         int index = -1;
-        for (int i = 0; i < array.length; i++) {
-            if ((E) array[i] == element) {
+        for (int i = 0; i < array.size(); i++) {
+            if (array.get(i).equals(element)) {
                 index = i;
             }
         }
@@ -35,49 +31,47 @@ public class DefaultCustomArrayList<E> implements CustomArrayList<E> {
             return false;
         }
 
-        int newSize = array.length - 1;
-        Object[] newArray = new Object[newSize];
-        System.arraycopy(array, 0, newArray, 0, index);
-        System.arraycopy(array, index + 1, newArray, index, array.length - 1 - index);
-        array = newArray;
+        array.remove(index);
+
         return true;
     }
 
     private void remove(int index) {
-        if (index >= array.length || index < 0) {
+        if (index >= array.size() || index < 0) {
             throw new IndexOutOfBoundsException("Index out of range");
         }
-        int newSize = array.length - 1;
-        Object[] newArray = new Object[newSize];
-        System.arraycopy(array, 0, newArray, 0, index);
-        System.arraycopy(array, index + 1, newArray, index, array.length - 1 - index);
-        array = newArray;
+
+        array.remove(index);
     }
 
     @Override
     public E get(int index) {
-        return (E) array[index];
+        if (index >= array.size() || index < 0) {
+            throw new IndexOutOfBoundsException("Index out of range");
+        }
+
+        return array.get(index);
     }
 
     @Override
     public int size() {
-        return array.length;
+        return array.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return array.length == 0;
+        return array.size() == 0;
     }
 
     @Override
     public void clear() {
-        array = new Object[0];
+        array = new ArrayList<E>();
     }
 
     @Override
     public boolean contains(E element) {
-        for (int i = 0; i < array.length; i++) {
-            if ((E) array[i] == element) {
+        for (int i = 0; i < array.size(); i++) {
+            if (array.get(i).equals(element)) {
                 return true;
             }
         }
@@ -95,7 +89,7 @@ public class DefaultCustomArrayList<E> implements CustomArrayList<E> {
 
         @Override
         public boolean hasNext() {
-            return currentIndex < array.length;
+            return currentIndex < array.size();
         }
 
         @Override
@@ -103,8 +97,9 @@ public class DefaultCustomArrayList<E> implements CustomArrayList<E> {
             if (!hasNext()) {
                 throw new IndexOutOfBoundsException("No more elements");
             }
-            
-            return (E) array[currentIndex++];
+            E result = array.get(currentIndex);
+            currentIndex++;
+            return result;
         }
 
     }
